@@ -6,6 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 
@@ -21,30 +22,47 @@ public class Main extends Application{
         ElevatorManager manager = new ElevatorManager(leftElevator, rightElevator);
         Integer[] floors = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
 
-        ComboBox<Integer> rightCombo = new ComboBox<>();
-        rightCombo.getItems().addAll(floors);
-        rightCombo.setValue(0);
-        ComboBox<Integer> leftCombo = new ComboBox<>();
-        leftCombo.getItems().addAll(floors);
-        leftCombo.setValue(0);
 
-        Button rightButton;
-        Button leftButton;
-        rightButton = new Button("Call the right one");
-        rightButton.setOnAction(e -> manager.rightElevator.call(rightCombo.getValue()));
-        leftButton = new Button("Call the left one");
-        leftButton.setOnAction(e -> manager.leftElevator.call(leftCombo.getValue()));
+        Button bottomRightButton;
+        Button bottomLeftButton;
+        bottomRightButton = new Button("Stop right elevator");
+//        bottomRightButton.setOnAction(e -> manager.rightElevator.call(rightCombo.getValue()));
+        bottomLeftButton = new Button("Stop left elevator");
+//        bottomLeftButton.setOnAction(e -> manager.leftElevator.call(leftCombo.getValue()));
 
         BorderPane layout = new BorderPane();
-        HBox buttons = new HBox();
-        layout.setBottom(buttons);
-        buttons.setAlignment(Pos.CENTER);
-        buttons.setSpacing(20);
-        buttons.setPadding(new Insets(30,10,30,10));
-        buttons.getChildren().add(leftCombo);
-        buttons.getChildren().add(leftButton);
-        buttons.getChildren().add(rightButton);
-        buttons.getChildren().add(rightCombo);
+
+        VBox leftButtons = new VBox();
+        leftButtons.setAlignment(Pos.CENTER);
+        leftButtons.setPadding(new Insets(40,40,40,40));
+        leftButtons.setSpacing(20);
+        layout.setLeft(leftButtons);
+
+        VBox rightButtons = new VBox();
+        rightButtons.setAlignment(Pos.CENTER);
+        rightButtons.setPadding(new Insets(40,40,40,40));
+        rightButtons.setSpacing(20);
+        layout.setRight(rightButtons);
+
+        for(Integer f: floors){
+            Integer floor = floors.length - (f+1);
+            Button leftButton = new Button(floor.toString());
+            leftButton.setPrefWidth(40);
+            Button rightButton = new Button(floor.toString());
+            rightButton.setPrefWidth(40);
+            leftButton.setOnAction(e -> manager.leftElevator.call(floor));
+            rightButton.setOnAction(e -> manager.rightElevator.call(floor));
+            leftButtons.getChildren().add(leftButton);
+            rightButtons.getChildren().add(rightButton);
+        }
+
+        HBox bottomButtons = new HBox();
+        layout.setBottom(bottomButtons);
+        bottomButtons.setAlignment(Pos.CENTER);
+        bottomButtons.setSpacing(20);
+        bottomButtons.setPadding(new Insets(30,10,30,10));
+        bottomButtons.getChildren().add(bottomLeftButton);
+        bottomButtons.getChildren().add(bottomRightButton);
 
 
         primaryStage.setTitle("Elevator Simulator");
