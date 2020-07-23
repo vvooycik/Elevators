@@ -16,8 +16,8 @@ public class Main extends Application{
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Elevator rightElevator = new Elevator();
-        Elevator leftElevator = new Elevator();
+        Elevator rightElevator = new Elevator("Right Elevator");
+        Elevator leftElevator = new Elevator("Left Elevator");
         ElevatorManager manager = new ElevatorManager(leftElevator, rightElevator);
         Integer[] floors = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
 
@@ -49,8 +49,8 @@ public class Main extends Application{
             leftButton.setPrefWidth(40);
             Button rightButton = new Button(floor.toString());
             rightButton.setPrefWidth(40);
-            leftButton.setOnAction(e -> manager.leftElevator.call(floor));
-            rightButton.setOnAction(e -> manager.rightElevator.call(floor));
+            leftButton.setOnAction(e -> manager.call(manager.leftElevator, floor));
+            rightButton.setOnAction(e -> manager.call(manager.rightElevator, floor));
             leftButtons.getChildren().add(leftButton);
             rightButtons.getChildren().add(rightButton);
         }

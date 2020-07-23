@@ -1,24 +1,41 @@
 import java.util.LinkedList;
+import java.util.concurrent.Callable;
 
-public class Elevator {
+public class Elevator implements Callable<Integer> {
 
+    private String name;
     private boolean isItFree;
     private boolean doorOpen;
     private boolean isItMoving;
-    private short currentFloor;
-    private short destination;
+    private Integer currentFloor;
+    private Integer destination;
     LinkedList<Floor> floorQueue;
 
-    public Elevator(){
+    public Elevator(String name){
+        this.name = name;
         isItFree = true;
         isItMoving = false;
         currentFloor = 0;
         floorQueue = new LinkedList<>();
     }
-    public void call(Integer floor){
-        System.out.println("Elevator called on floor " + floor.toString());
+    @Override
+    public Integer call() throws Exception {
+        closeTheDoor();
+        move(true);
+        while(!currentFloor.equals(destination)){
+            if(currentFloor < destination) {
+                currentFloor++;
+                Thread.sleep(2000);
+                System.out.println("I'm on the floor no. " + currentFloor);
+            }
+            else{
+                currentFloor--;
+                Thread.sleep(2000);
+                System.out.println("I'm on the floor no. " + currentFloor);
+            }
+        }
+        return currentFloor;
     }
-
 
 
     public boolean isItFree(){
@@ -31,9 +48,11 @@ public class Elevator {
         return doorOpen;
     }
     public void openTheDoor(){
+        System.out.println("Opening the door");
         doorOpen = true;
     }
     public void closeTheDoor(){
+        System.out.println("Closing the door");
         doorOpen = false;
     }
     public boolean isItMoving(){
@@ -42,17 +61,24 @@ public class Elevator {
     public void move(boolean isItMoving){
         this.isItMoving = isItMoving;
     }
-    public short getCurrentFloor(){
+    public Integer getCurrentFloor(){
         return currentFloor;
     }
-    public void setCurrentFloor(short currentFloor){
+    public void setCurrentFloor(Integer currentFloor){
         this.currentFloor = currentFloor;
     }
-    public short getDestination(){
+    public Integer getDestination(){
         return destination;
     }
-    public void setDestination(short destination){
+    public void setDestination(Integer destination){
         this.destination = destination;
     }
+    public void displayTheMessage(){
+        System.out.println("Go to the other elevator");
+    }
+    public String toString(){
+        return name;
+    }
+
 
 }
