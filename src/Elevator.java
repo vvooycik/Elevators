@@ -24,12 +24,12 @@ public class Elevator implements Callable<Integer> {
         while(!currentFloor.equals(destination)){
             if(currentFloor < destination) {
                 currentFloor++;
-                Thread.sleep(2000);
+                Thread.sleep(5000);
                 System.out.printf("I'm the %s on the floor no.%d, dest = %d%n", role, currentFloor, destination);
             }
             else{
                 currentFloor--;
-                Thread.sleep(2000);
+                Thread.sleep(5000);
                 System.out.printf("I'm the %s on the floor no.%d, dest = %d%n", role, currentFloor, destination);
             }
         }
