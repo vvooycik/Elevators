@@ -1,22 +1,21 @@
-import java.util.LinkedList;
 import java.util.concurrent.Callable;
 
 public class Elevator implements Callable<Integer> {
 
-    private String name;
+
+
+    private String role;
     private boolean isItFree;
     private boolean doorOpen;
     private boolean isItMoving;
     private Integer currentFloor;
     private Integer destination;
-    LinkedList<Floor> floorQueue;
 
-    public Elevator(String name){
-        this.name = name;
+    public Elevator(String role){
+        this.role = role;
         isItFree = true;
         isItMoving = false;
-        currentFloor = 0;
-        floorQueue = new LinkedList<>();
+        currentFloor = 10;
     }
     @Override
     public Integer call() throws Exception {
@@ -26,18 +25,26 @@ public class Elevator implements Callable<Integer> {
             if(currentFloor < destination) {
                 currentFloor++;
                 Thread.sleep(2000);
-                System.out.println("I'm on the floor no. " + currentFloor);
+                System.out.printf("I'm the %s on the floor no.%d, dest = %d%n", role, currentFloor, destination);
             }
             else{
                 currentFloor--;
                 Thread.sleep(2000);
-                System.out.println("I'm on the floor no. " + currentFloor);
+                System.out.printf("I'm the %s on the floor no.%d, dest = %d%n", role, currentFloor, destination);
             }
         }
+        move(false);
+        openTheDoor();
         return currentFloor;
     }
 
+    public String getRole() {
+        return role;
+    }
 
+    public void setRole(String role) {
+        this.role = role;
+    }
     public boolean isItFree(){
         return isItFree;
     }
@@ -77,7 +84,7 @@ public class Elevator implements Callable<Integer> {
         System.out.println("Go to the other elevator");
     }
     public String toString(){
-        return name;
+        return role;
     }
 
 

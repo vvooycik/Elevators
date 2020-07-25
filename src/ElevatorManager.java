@@ -1,17 +1,22 @@
+import java.util.LinkedList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 
 public class ElevatorManager {
     Elevator leftElevator;
     Elevator rightElevator;
-    Future<Floor> task;
+    Future<Integer> leftTask;
+    Future<Integer> rightTask;
     ExecutorService exec;
+    LinkedList<Floor> floorQueue;
 
     public ElevatorManager(Elevator leftElevator, Elevator rightElevator){
         this.leftElevator = leftElevator;
         this.rightElevator = rightElevator;
         this.exec = Executors.newFixedThreadPool(2);
+        floorQueue = new LinkedList<>();
     }
 
     public void call(Elevator elevator, Integer floor){
@@ -37,26 +42,51 @@ public class ElevatorManager {
                 // is it free?
                 if(!elevator.isItMoving()) {
                     elevator.setDestination(floor);
-                    exec.submit(elevator);
+                    if(elevator.getRole().equals("Left Elevator"))
+                        leftTask = exec.submit(elevator);
+                    else
+                        rightTask = exec.submit(elevator);
                 }
                 // if not free, is it above the caller?
                 else{
-                    if(elevator.getCurrentFloor() >= (floor+2) && elevator.getDestination()< elevator.getCurrentFloor()){
-                        // TODO Do I need to interrupt somehow this ongoing trip?
-                        Integer tmp = elevator.getDestination();
-                        elevator.setDestination(floor);
-                        exec.submit(elevator);
-                        elevator.openTheDoor();
-                        elevator.setDestination(tmp);
-                        exec.submit(elevator);
+                    // if above the caller and going down
+                    if(elevator.getCurrentFloor() >= (floor+2)){
+                        if(elevator.getDestination() < elevator.getCurrentFloor()) {
+                            makeAStop(elevator, floor);
+                        }
+                        else{
+                            floorQueue.add(new Floor(floor));
+                        }
+                        // Elevator not above, but destination set for the caller's floor
+                    }else if(elevator.getDestination().equals(floor)){
+                        return; // Wait for the elevator
                     }
-
+                    else{
+                        floorQueue.add(new Floor(floor));
+                    }
                 }
             }
             // the other one is closer
             else{
 
             }
+        }
+    }
+    public void makeAStop(Elevator elevator, Integer stop){
+        Integer tmp = elevator.getDestination();
+        elevator.setDestination(stop);
+        if(elevator.getRole().equals("LeftElevator")) {
+            while (!leftTask.isDone()) {
+                ;
+            }
+            elevator.setDestination(tmp);
+            leftTask = exec.submit(elevator);
+        }else{
+            while(!rightTask.isDone()){
+                ;
+            }
+            elevator.setDestination(tmp);
+            rightTask = exec.submit(elevator);
         }
     }
 
